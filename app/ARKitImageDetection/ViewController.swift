@@ -8,8 +8,12 @@ Main view controller for the AR experience.
 import ARKit
 import SceneKit
 import UIKit
+import Starscream
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, WebSocketDelegate {
+    func didReceive(event: Starscream.WebSocketEvent, client: Starscream.WebSocket) {
+        print(event)
+    }
     
     @IBOutlet var sceneView: ARSCNView!
     
@@ -38,11 +42,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var session: ARSession {
         return sceneView.session
     }
+    var socket: WebSocket?
     
     // MARK: - View Controller Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        var request = URLRequest(url: URL(string: "ws://192.168.86.31:8080")!)
+        request.timeoutInterval = 5
+        socket = WebSocket(request: request)
+        socket?.delegate = self
+        socket?.connect()
         
         sceneView.delegate = self
         sceneView.session.delegate = self
@@ -120,7 +130,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         print(risNode.worldPosition.x)
         print(risNode.worldPosition.y)
         
-        guard let targetNode, let rxNode else {return}
+        
+        guard let targetNode, let rxNode else {print("SOME WAS NULL");return}
+        socket?.write(string: "{\"ris\":{\"x\":\(risNode.position.x), \"y\":\(risNode.position.z)}, \"tx\":{\"x\":\(targetNode.position.x), \"y\":\(targetNode.position.z)}, \"rx\":{\"x\":\(rxNode.position.x), \"y\":\(rxNode.position.z)}}")
         let cylinderLineNode = SCNGeometry.cylinderLine(from: targetNode.position,
                                                         to: risNode.position,
                                                             segments: 3)

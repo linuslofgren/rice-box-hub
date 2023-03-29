@@ -1,3 +1,7 @@
-import WebSocket, { WebSocketServer } from "ws";
+import express from "npm:express";
+import * as trpc from "https://esm.sh/@trpc/server@9.27.2";
+import * as trpcExpress from "https://esm.sh/@trpc/server@9.27.2/adapters/express";
 
-const server = new WebSocketServer({ port: 6332 })
+const app = express()
+
+app.listen(8000)

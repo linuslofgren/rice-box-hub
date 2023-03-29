@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "source.png",
+      "filename" : "target.jpeg",
       "idiom" : "universal"
     }
   ],
@@ -10,7 +10,6 @@
     "version" : 1
   },
   "properties" : {
-    "unit" : "centimeters",
-    "width" : 11.5
+    "width" : 15.506109150149335
   }
 }

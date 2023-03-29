@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "rx.png",
+      "filename" : "rx2.jpeg",
       "idiom" : "universal"
     }
   ],
@@ -10,7 +10,6 @@
     "version" : 1
   },
   "properties" : {
-    "unit" : "centimeters",
-    "width" : 18
+    "width" : 17.503494623655914
   }
 }
