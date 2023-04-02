@@ -3,7 +3,7 @@ module ElementDisplacing
 include("Vec2.jl")
 include("Surface.jl")
 
-export couple_transmitter_receiver
+export couple_transmitter_receiver, Vec2, Surface
 
 
 """
@@ -32,7 +32,7 @@ function couple_transmitter_receiver(
     element_positions = LinRange(x0, x1, RIS.num_elements)
     phaseshifts = map(x -> _phaseshift(x, theta_i, theta_r, wavelength), element_positions)
 
-    return collect(map(x -> _displacement_from_phaseshift(phaseshifts, wavelength)))
+    return collect(map(x -> _displacement_from_phaseshift(x, wavelength), phaseshifts))
 end
 
 
