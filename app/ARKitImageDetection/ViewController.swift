@@ -130,9 +130,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, WebSocketDelegate {
         print(risNode.worldPosition.x)
         print(risNode.worldPosition.y)
         
-        
+        let risCoordinates = scene.rootNode.convertPosition(risNode.worldPosition, from: nil)
+        print("x:\(risCoordinates.x), y:\(risCoordinates.y), z:\(risCoordinates.z)")
         guard let targetNode, let rxNode else {print("SOME WAS NULL");return}
-        socket?.write(string: "{\"ris\":{\"x\":\(risNode.position.x), \"y\":\(risNode.position.z)}, \"tx\":{\"x\":\(targetNode.position.x), \"y\":\(targetNode.position.z)}, \"rx\":{\"x\":\(rxNode.position.x), \"y\":\(rxNode.position.z)}}")
+
+        let targetCoordinates = scene.rootNode.convertPosition(targetNode.worldPosition, from: nil)
+        let rxCoordinates = scene.rootNode.convertPosition(rxNode.worldPosition, from: nil)
+        
+        socket?.write(string: "{\"ris\":{\"x\":\(risNode.position.x), \"y\":\(risNode.position.y)}, \"tx\":{\"x\":\(targetNode.position.x), \"y\":\(targetNode.position.y)}, \"rx\":{\"x\":\(rxNode.position.x), \"y\":\(rxNode.position.y)}}")
         let cylinderLineNode = SCNGeometry.cylinderLine(from: targetNode.position,
                                                         to: risNode.position,
                                                             segments: 3)

@@ -1,16 +1,16 @@
 {
-  "images" : [
+  "images": [
     {
-      "filename" : "top.png",
-      "idiom" : "universal"
+      "filename": "top.png",
+      "idiom": "universal"
     }
   ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
+  "info": {
+    "author": "xcode",
+    "version": 1
   },
-  "properties" : {
-    "unit" : "centimeters",
-    "width" : 8
+  "properties": {
+    "unit": "centimeters",
+    "width": 8
   }
 }
