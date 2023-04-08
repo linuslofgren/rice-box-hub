@@ -1,0 +1,26 @@
+{
+  "name": "@examples/next-minimal",
+  "version": "10.0.0-proxy-alpha.74",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "canvas": "^2.11.0",
+    "konva": "^8.4.2",
+    "next": "latest",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "react-konva": "^18.2.5",
+    "ws": "^8.13.0",
+    "zod": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.11",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.5",
+    "typescript": "4.7.4"
+  }
+}
