@@ -1,7 +1,6 @@
 module ElementDisplacing
 
-include("Vec2.jl")
-include("Surface.jl")
+include("types.jl")
 
 export angle, couple_transmitter_receiver, focus, Vec2, Surface
 
