@@ -64,7 +64,7 @@ const Page = () => {
       if (ws.current) {
         ws.current.send(JSON.stringify(operation));
       }
-    }, 1000);
+    }, 200);
 
     return () => {
       clearInterval(i);

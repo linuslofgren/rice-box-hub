@@ -1,18 +1,24 @@
 export const sendToSocket = async (
   data: Record<string, unknown>,
-  name = "ris.sock",
+  name = "../../positioning/ris.sock",
 ) => {
-  console.log("Sending on socket to JULIA");
-
+  console.info("[JULIA] Sending on socket to JULIA");
   const conn = await Deno.connect({ path: name, transport: "unix" });
-  await conn.write(new TextEncoder().encode(JSON.stringify(data)));
+  await conn.write(new TextEncoder().encode(JSON.stringify(data)+'\n'));
+  console.info("[JULIA] Sent");
+  
   const decoder = new TextDecoder();
   const b = new Uint8Array(1024);
+  console.info("[JULIA] Awaiting read...");
   const n = await conn.read(b);
+  const data_tr = decoder.decode(b.subarray(0, n == null ? undefined : n))
+  console.info("[JULIA], got data", data_tr);
+
   const resp = JSON.parse(
-    decoder.decode(b.subarray(0, n == null ? undefined : n)),
+    data_tr
   );
   conn.close();
+  console.info("[JULIA] Finished sending to JULIA");
   return resp;
 };
 

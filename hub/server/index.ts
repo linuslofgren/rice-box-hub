@@ -7,7 +7,7 @@ const { iterator, add } = AppendingQueueController<Configuration>();
 const placementLoop = async () => {
   for await (const risConfiguration of iterator()) {
     // TODO: Send configuration to RIS via serial
-    console.log(risConfiguration);
+    console.log("Configuration from JULIA", risConfiguration);
   }
 };
 
