@@ -3,7 +3,17 @@ module ElementDisplacing
 include("Vec2.jl")
 include("Surface.jl")
 
-export couple_transmitter_receiver, Vec2, Surface
+export angle, couple_transmitter_receiver, focus, Vec2, Surface
+
+
+function angle(
+        RIS::Surface,
+        wavelength::Float64,
+        angle::Float64
+    )
+
+    throw("unimplemented")
+end
 
 
 """
@@ -33,6 +43,17 @@ function couple_transmitter_receiver(
     phaseshifts = map(x -> _phaseshift(x, theta_i, theta_r, wavelength), element_positions)
 
     return collect(map(x -> _displacement_from_phaseshift(x, wavelength), phaseshifts))
+end
+
+
+function focus(
+        RIS::Surface,
+        transmitter::Vec2{Float64},
+        receiver::Vec2{Float64},
+        wavelength::Float64
+    )
+
+    throw("unimplemented")
 end
 
 
