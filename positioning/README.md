@@ -11,5 +11,5 @@ julia positioning.jl
 
 The system supports three operations (which are more or less WIP):
 - `angle`: configures the RIS to reflect in given angle to the surface normal
-- `couple`: configures the RIS to enable a direct channel between a tranceiver and a receiver
+- `couple`: configures the RIS to enable a direct channel between a transmitter and a receiver
 - `focus`: configures the RIS to focus the signal at a point in front of it
