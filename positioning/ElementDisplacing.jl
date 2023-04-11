@@ -1,8 +1,4 @@
-module ElementDisplacing
-
 include("types.jl")
-
-export angle, couple, focus
 
 
 function angle(
@@ -93,6 +89,4 @@ Calculates the element displacement necessary to induce the desired `phaseshift`
 """
 function _displacement_from_phaseshift(phaseshift::Float64, wavelength::Float64)
     return (phaseshift*wavelength/2pi) % (wavelength/2)
-end
-
 end

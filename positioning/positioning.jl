@@ -5,13 +5,35 @@ include("ElementDisplacing.jl")
 include("types.jl")
 
 
-function get_displacements(input::Dict{String, Dict{String, Float64}})
-    ris = Surface(0.12, 0.3, 10)
-    ris_pos = Vec2(input["ris"]["x"], input["ris"]["y"])
-    rx = Vec2(input["rx"]["x"], input["rx"]["y"])
-    tx = Vec2(input["tx"]["x"], input["tx"]["y"])
+const WAVELENGTH = 0.12 # meters
+const RIS_LENGTH = 0.3 # meters
+const RIS_NUM_ELEMENTS = 10
+const RIS = Surface(WAVELENGTH, RIS_LENGTH, RIS_NUM_ELEMENTS)
 
-    return ElementDisplacing.couple(ris, ris_pos, rx, tx)
+const OPERATIONS = Dict(
+        "angle" => angle,
+        "couple" => couple,
+        "focus" => focus
+    )
+
+
+function get_configuration(data::Dict{String, Any})
+    # Request will be of type `Operation` (in hub/server/types.ts)
+    # The first key determines type of operation
+    op_type = first(data)[1]
+    func = OPERATIONS[op_type]
+
+    # Pluck the value from the first key
+    value = first(data)[2]
+
+    if op_type == "angle"
+        value = convert(Float64, value)
+        return func(RIS, value)
+    else # couple or focus
+        value = convert(Dict{String, Dict{String, Float64}}, value)
+        positions = ObjectPositions(value)
+        return func(RIS, positions)
+    end
 end
 
 
@@ -24,21 +46,8 @@ function handle_request(conn)
             data = JSON.parse(msg)
 
             response = "{}"
-
-            # Test the shape of the request to determine algorithm
-            # Request will be of type `Operation` (in hub/server/types.ts)
-            # TODO: Differentiate between `focus` and `couple`
-            try
-                # Test for Operations couple and focus
-                req_data = convert(Dict{String, Dict{String, Dict{String, Float64}}}, data)
-                # Pluck the value from the first key
-                positions = first(req_data)[2]
-                res_data = get_displacements(positions)
-                response = Dict("displacement" => res_data)
-            catch
-            end
-            # TODO: test for Operation angle
-            
+            res_data = get_configuration(data)
+            response = Dict("configuration" => res_data)
             write(conn, JSON.json(response))
         catch ex
             # handle any exceptions that occur during processing

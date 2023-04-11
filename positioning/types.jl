@@ -19,4 +19,15 @@ struct ObjectPositions
     ris::Vec2{Float64}
     rx::Vec2{Float64}
     tx::Vec2{Float64}
+
+    function ObjectPositions(pos::Dict{String, Dict{String, Float64}})
+        try
+            ris = Vec2(pos["ris"]["x"], pos["ris"]["y"])
+            rx = Vec2(pos["rx"]["x"], pos["rx"]["y"])
+            tx = Vec2(pos["tx"]["x"], pos["tx"]["y"])
+            new(ris, rx, tx)
+        catch
+            throw(ArgumentError)
+        end
+    end
 end
