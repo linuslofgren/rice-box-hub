@@ -14,3 +14,9 @@ struct Surface
         new(wavelength, length, num_elements, element_width)
     end
 end
+
+struct ObjectPositions
+    ris::Vec2{Float64}
+    rx::Vec2{Float64}
+    tx::Vec2{Float64}
+end

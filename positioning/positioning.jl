@@ -2,15 +2,16 @@ using JSON
 using Sockets
 
 include("ElementDisplacing.jl")
+include("types.jl")
 
 
 function get_displacements(input::Dict{String, Dict{String, Float64}})
-    ris = ElementDisplacing.Surface(0.12, 0.3, 10)
-    ris_pos = ElementDisplacing.Vec2(input["ris"]["x"], input["ris"]["y"])
-    rx = ElementDisplacing.Vec2(input["rx"]["x"], input["rx"]["y"])
-    tx = ElementDisplacing.Vec2(input["tx"]["x"], input["tx"]["y"])
+    ris = Surface(0.12, 0.3, 10)
+    ris_pos = Vec2(input["ris"]["x"], input["ris"]["y"])
+    rx = Vec2(input["rx"]["x"], input["rx"]["y"])
+    tx = Vec2(input["tx"]["x"], input["tx"]["y"])
 
-    return ElementDisplacing.couple_transmitter_receiver(ris, ris_pos, tx, rx)
+    return ElementDisplacing.couple(ris, ris_pos, rx, tx)
 end
 
 
