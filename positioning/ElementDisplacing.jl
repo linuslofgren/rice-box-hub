@@ -7,7 +7,6 @@ export angle, couple_transmitter_receiver, focus, Vec2, Surface
 
 function angle(
         RIS::Surface,
-        wavelength::Float64,
         angle::Float64
     )
 
@@ -27,29 +26,29 @@ Returns the element displacements needed to couple the `transmitter` and `receiv
 """
 function couple_transmitter_receiver(
         RIS::Surface,
+        RIS_pos::Vec2{Float64},
         transmitter::Vec2{Float64},
-        receiver::Vec2{Float64},
-        wavelength::Float64
+        receiver::Vec2{Float64}
     )
 
-    theta_i, theta_r = _calc_angles(RIS, transmitter, receiver)
+    theta_i, theta_r = _calc_angles(RIS_pos, transmitter, receiver)
 
     # endpoints for element mid positions
     x0 = -RIS.length + 0.5*RIS.element_width
     x1 = -x0
 
     element_positions = LinRange(x0, x1, RIS.num_elements)
-    phaseshifts = map(x -> _phaseshift(x, theta_i, theta_r, wavelength), element_positions)
+    phaseshifts = map(x -> _phaseshift(x, theta_i, theta_r, RIS.wavelength), element_positions)
 
-    return collect(map(x -> _displacement_from_phaseshift(x, wavelength), phaseshifts))
+    return collect(map(x -> _displacement_from_phaseshift(x, RIS.wavelength), phaseshifts))
 end
 
 
 function focus(
         RIS::Surface,
+        RIS_pos::Vec2{Float64},
         transmitter::Vec2{Float64},
-        receiver::Vec2{Float64},
-        wavelength::Float64
+        receiver::Vec2{Float64}
     )
 
     throw("unimplemented")
@@ -62,9 +61,9 @@ end
 Calculates the angles between the surface normal of the RIS and the transmitter and the
 receiver respectively.
 """
-function _calc_angles(RIS::Surface, transmitter::Vec2{Float64}, receiver::Vec2{Float64})
-    incident_angle = pi/2 - atan(transmitter.y-RIS.position.y, transmitter.x-RIS.position.x)
-    reflection_angle = pi/2 - atan(receiver.y-RIS.position.y, receiver.x-RIS.position.x)
+function _calc_angles(RIS_pos::Vec2{Float64}, transmitter::Vec2{Float64}, receiver::Vec2{Float64})
+    incident_angle = pi/2 - atan(transmitter.y-RIS_pos.y, transmitter.x-RIS_pos.x)
+    reflection_angle = pi/2 - atan(receiver.y-RIS_pos.y, receiver.x-RIS_pos.x)
 
     return incident_angle, reflection_angle
 end
