@@ -78,7 +78,7 @@ Calculates the phaseshift needed at position `x` to redirect a plane wave incide
 `theta_i` from the surface normal to reflect in the direction `theta_r`.
 """
 function _phaseshift(x::Float64, theta_i::Float64, theta_r::Float64, wavelength::Float64)
-    return (2pi/wavelength * x * (sin(theta_i)+sin(theta_r))) #% (2pi)
+    return 2pi/wavelength * x * (sin(theta_i)+sin(theta_r))
 end
 
 
@@ -88,5 +88,5 @@ end
 Calculates the element displacement necessary to induce the desired `phaseshift`.
 """
 function _displacement_from_phaseshift(phaseshift::Float64, wavelength::Float64)
-    return (phaseshift*wavelength/2pi) % (wavelength/2)
+    return mod((phaseshift*wavelength/2pi), (wavelength/2))
 end
