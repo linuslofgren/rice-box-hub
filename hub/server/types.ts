@@ -11,7 +11,7 @@ type Expand<T> = T extends T ? { [K in keyof T]: T[K] } : never;
 // OneOf taken (somewhat) from
 // https://stackoverflow.com/questions/42123407/does-typescript-support-mutually-exclusive-types#comment123255834_53229567
 type OneOf<T extends Record<string | number | symbol, unknown>[]> = {
-  [K in keyof T]: Expand<T[K] & Record<Exclude<UnionKeys<T[number]>, keyof T[K]>, never>>;
+  [K in keyof T]: Expand<T[K] & Partial<Record<Exclude<UnionKeys<T[number]>, keyof T[K]>, never>>>;
 }[number];
 
 type Couple = {
