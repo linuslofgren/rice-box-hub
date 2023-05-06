@@ -1,5 +1,5 @@
 use std::env;
-use std::io::{self, BufRead, BufReader, Write};
+use std::io::{self, BufReader, Write};
 use std::str;
 use std::time::Duration;
 
@@ -13,20 +13,21 @@ fn main() {
         .open()
         .expect("Failed to open serial port");
 
-    let stdin = io::stdin();
-    let mut lines = stdin.lock().lines();
+    let client = redis::Client::open("redis://127.0.0.1/")
+        .expect("Failed to open redis client");
+    let mut conn = client.get_connection()
+        .expect("Failed to connect to redis client");
+    let mut pubsub = conn.as_pubsub();
+    pubsub.subscribe("ris_position")
+        .expect("Failed to subscribe to channel");
 
     let mut port = BufReader::new(port);
 
     loop {
-        // read a line from standard input
-        let input = match lines.next() {
-            Some(line) => match line {
-                Ok(line) => line,
-                Err(_) => break,
-            },
-            None => break,
-        };
+        let input : String = pubsub.get_message()
+            .expect("Failed to get message")
+            .get_payload()
+            .expect("Failed to get payload");
 
         // send the input to the Arduino
         let mut buf: Vec<u8> = input.into();

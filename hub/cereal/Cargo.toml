@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 serialport = "4.2.0"
+
+[dependencies.redis]
+version = "*"
