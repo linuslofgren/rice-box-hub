@@ -1,9 +1,15 @@
 export const sendToSocket = async (
   data: Record<string, unknown>,
-  name = "../../positioning/ris.sock",
+  name = "../../positioning/socket/ris.sock",
 ) => {
   console.info("[JULIA] Sending on socket to JULIA");
-  const conn = await Deno.connect({ path: name, transport: "unix" });
+  let conn;
+  try {
+    conn = await Deno.connect({ path: name, transport: "unix" });
+  } catch (error) {
+    console.error(error);
+    return []
+  }
   await conn.write(new TextEncoder().encode(JSON.stringify(data)+'\n'));
   console.info("[JULIA] Sent");
   

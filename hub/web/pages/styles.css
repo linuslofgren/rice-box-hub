@@ -1,11 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300&display=swap');
 
 body {
-
+    background: white;
+    background-image: radial-gradient(rgb(194, 194, 194) 1px, transparent 0);
+    background-size: 40px 40px;
 }
 
 * {
-    font-family: 'isocpeur', sans-serif;
+    /* font-family: 'isocpeur', sans-serif; */
+    font-family: 'IBM Plex Sans', sans-serif;
     font-smooth: always;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

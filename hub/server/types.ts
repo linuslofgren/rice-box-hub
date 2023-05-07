@@ -26,7 +26,11 @@ type Angle = {
   angle: number;
 }
 
-export type Operation = OneOf<[Couple, Focus, Angle]>
+type Passthrough = {
+  passthrough: number[]
+}
+
+export type Operation = OneOf<[Couple, Focus, Angle, Passthrough]>
 
 type ObjectPositions = {
   tx: Position;

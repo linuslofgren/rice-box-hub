@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  redis:
+    image: redis
+  web:
+    ports:
+      - 3000:3000
+    build:
+      context: hub
+      dockerfile: web.Dockerfile
+  server:
+    ports:
+      - 8080:8080
+    build:
+      context: hub
+      dockerfile: server.Dockerfile
+    volumes:
+      - type: volume
+        source: socket
+        target: /positioning/socket
+  positioning:
+    build:
+      context: positioning
+      dockerfile: Dockerfile
+    volumes:
+      - type: volume
+        source: socket
+        target: /socket
+  cereal:
+    build:
+      context: hub/cereal
+      dockerfile: Dockerfile
+    entrypoint: cereal
+    command: tty-path
+    volumes:
+      - ${TTY}:tty-path
+
+volumes:
+  socket:

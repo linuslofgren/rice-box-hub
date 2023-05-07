@@ -13,7 +13,8 @@ const RIS = Surface(WAVELENGTH, RIS_LENGTH, RIS_NUM_ELEMENTS)
 const OPERATIONS = Dict(
         "angle" => angle,
         "couple" => couple,
-        "focus" => focus
+        "focus" => focus,
+        "passthrough" => nothing
     )
 
 
@@ -29,6 +30,8 @@ function get_configuration(data::Dict{String, Any})
     if op_type == "angle"
         value = convert(Float64, value)
         return func(RIS, value)
+    elseif op_type == "passthrough"
+        return value
     else # couple or focus
         value = convert(Dict{String, Dict{String, Float64}}, value)
         positions = ObjectPositions(value)
@@ -69,7 +72,8 @@ end
 
 
 function main()
-    PIPE = "ris.sock"
+    PIPE = "socket/ris.sock"
+    rm(PIPE, force=true)
     server = Sockets.listen(PIPE)
     println("listening...")
 
