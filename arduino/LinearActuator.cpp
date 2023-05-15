@@ -4,6 +4,8 @@ class LinearActuator : private LinActStepper {
     public:
         float position;
 
+        LinearActuator() {}
+
         LinearActuator(uint8_t stepPin, uint8_t dirPin, uint8_t stallPin) : LinActStepper(stepPin, dirPin, stallPin) {}
 
         /*

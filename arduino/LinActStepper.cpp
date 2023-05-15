@@ -7,6 +7,8 @@ class LinActStepper : InterruptHandler {
         uint8_t dirPin;
         volatile uint8_t stallPin;
 
+        LinActStepper() {}
+
         LinActStepper(uint8_t stepPin, uint8_t dirPin, uint8_t stallPin) {
             this->stepPin  = stepPin;
             this->dirPin = dirPin;
