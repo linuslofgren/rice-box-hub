@@ -1,12 +1,16 @@
 include("types.jl")
 
 
-function angle(
-        RIS::Surface,
-        angle::Float64
-    )
+function angle(RIS::Surface, angle::Float64)
+    # endpoints for element mid positions
+    x0 = -RIS.length/2 + 0.5*RIS.element_width
+    x1 = -x0
 
-    throw("unimplemented")
+    element_positions = LinRange(x0, x1, RIS.num_elements)
+
+    phaseshifts = map(x -> _phaseshift(x, 0.0, 2*angle, RIS.wavelength), element_positions)
+
+    return collect(map(x -> _displacement_from_phaseshift(x, RIS.wavelength), phaseshifts))
 end
 
 
@@ -36,7 +40,7 @@ function couple(
     theta_i, theta_r = _calc_angles(RIS_pos, rx, tx)
 
     # endpoints for element mid positions
-    x0 = -RIS.length + 0.5*RIS.element_width
+    x0 = -RIS.length/2 + 0.5*RIS.element_width
     x1 = -x0
 
     element_positions = LinRange(x0, x1, RIS.num_elements)
