@@ -44,8 +44,8 @@ class LinActStepper : InterruptHandler {
         void _setupPinModes() {
             pinMode(stepPin, OUTPUT);
             pinMode(dirPin, OUTPUT);
-            pinMode(stallPin, INPUT);
-            attachInterrupt(digitalPinToInterrupt(stallPin), LOW);
+            // pinMode(stallPin, INPUT);
+            // attachInterrupt(digitalPinToInterrupt(stallPin), LOW);
         }
 
         void _startStepping() {

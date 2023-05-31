@@ -2,7 +2,7 @@
 
 class LinearActuator : private LinActStepper {
     public:
-        float position;
+        float position = 0;
 
         LinearActuator() {}
 
@@ -28,7 +28,7 @@ class LinearActuator : private LinActStepper {
         This one just yeets the actuator into the wall and let's it stall until it's certainly at the end.
         */
         void calibratePositionCursed() {
-            setDirForward();
+            setDirBackward();
             step(82.0);
             position = 0.0;
         }
