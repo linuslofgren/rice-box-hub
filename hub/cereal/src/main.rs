@@ -13,7 +13,7 @@ fn main() {
         .open()
         .expect("Failed to open serial port");
 
-    let client = redis::Client::open("redis://redis/")
+    let client = redis::Client::open("redis://localhost:6378/")
         .expect("Failed to open redis client");
     let mut conn = client.get_connection()
         .expect("Failed to connect to redis client");
