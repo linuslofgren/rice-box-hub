@@ -3,9 +3,10 @@
 const float HALF_WAVELENGTH = 0.062456762083333;
 
 const int NUM_ELEMENTS = 10;
-const uint8_t DIR_PINS[NUM_ELEMENTS] = {22,24,26,28,30,32,34,36,38,40};
-const uint8_t STEP_PINS[NUM_ELEMENTS] = {13,12,11,10,9,8,7,6,5,4};
-const uint8_t STALL_PINS[NUM_ELEMENTS] = {2,2,2,2,2,2,2,2,2,2};
+const uint8_t DIR_PINS[NUM_ELEMENTS]   = {22, 24, 26, 28, 30, 32, 34, 36, 38, 40};
+const uint8_t STEP_PINS[NUM_ELEMENTS]  = {13, 12, 11, 10, 9,  8,  7,  6,  5,  4};
+const uint8_t STALL_PINS[NUM_ELEMENTS] = {2,  2,  2,  2,  2,  2,  2,  2,  2,  2};
+const uint8_t ENABLE_PIN[NUM_ELEMENTS] = {23, 25, 27, 29, 31, 33, 35, 37, 39, 41};
 
 float configuration[NUM_ELEMENTS];
 LinearActuator linActs[NUM_ELEMENTS];
@@ -13,8 +14,12 @@ LinearActuator linActs[NUM_ELEMENTS];
 
 void setup() {
 
+
     for (int i=0; i<NUM_ELEMENTS; i++) {
-        linActs[i] = LinearActuator(STEP_PINS[i], DIR_PINS[i], STALL_PINS[i]);
+        linActs[i] = LinearActuator(STEP_PINS[i], DIR_PINS[i], STALL_PINS[i], ENABLE_PIN[i]);
+    }
+
+    for (int i=0; i<NUM_ELEMENTS; i++) {
         linActs[i].calibratePositionCursed();
     }
 
@@ -26,11 +31,9 @@ void loop() {
         // awaits next float
         while (Serial.available() == 0) {}
 
-        float dx = Serial.parseFloat(SKIP_ALL, '\n');
+        float incomingFloat = Serial.parseFloat(SKIP_ALL, '\n');
 
-        configuration[i] = dx;
-        
-        
+        configuration[i] = incomingFloat;
     }
 
     for (int j=0; j<NUM_ELEMENTS; j++) {
