@@ -20,7 +20,8 @@ const Page = () => {
   const ws = useRef<WebSocket>();
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8080");
+
+    ws.current = new WebSocket("ws://"+window.location.hostname+":8080");
     ws.current.onopen = (event) => {
     };
     ws.current.onmessage = (e) => {
@@ -61,26 +62,26 @@ const Page = () => {
         onClick={e => {
           const r = e.currentTarget.getBoundingClientRect();
           let frac = (r.height - (e.clientY - r.top)) / r.height
-          setPositions(positions => positions.map((p, j) => j == i ? frac : p))
+          setPositions(positions => positions.map((p, j) => j == i ? frac/10 : p))
         }}
 
         onMouseMove={e => {
           const r = e.currentTarget.getBoundingClientRect();
           let frac = (r.height - (e.clientY - r.top)) / r.height
-          setShadowPositions(positions => positions.map((p, j) => j == i ? ({show: true, p: frac}) : p))
+          setShadowPositions(positions => positions.map((p, j) => j == i ? ({show: true, p: frac/10}) : p))
         }}
 
         onMouseOut={e => {
           setShadowPositions(positions => positions.map((p, j) => j == i ? {p: p.p, show: false} : p))
         }}
         style={{ position: 'relative', height: 200, width: 40, display: 'flex', alignItems: 'flex-end', backgroundColor: 'rgb(250, 250, 250)', border: '1px dashed rgb(220, 220, 220)', borderRadius: 2, marginInline: 10 }} key={i}>
-          <div style={{ zIndex: 1, background: 'linear-gradient(#e66465, #9198e5)', transition: 'height 0.1s', width: '100%', height:  ((p)*100) + '%', borderRadius: 2}}
+          <div style={{ zIndex: 1, background: 'linear-gradient(#e66465, #9198e5)', transition: 'height 0.1s', width: '100%', height:  ((p*10)*100) + '%', borderRadius: 2}}
           
           >
 
           </div>
 
-          <div style={{ zIndex: 0, position: 'absolute', opacity: shadowPositions[i].show == true ? 0.4 : 0.0, transition: 'opacity 0.1s', background: 'linear-gradient(#e66465ee, #9198e5ee)', width: '100%', height:  ((shadowPositions[i].p)*100) + '%', borderRadius: 2}}
+          <div style={{ zIndex: 0, position: 'absolute', opacity: shadowPositions[i].show == true ? 0.4 : 0.0, transition: 'opacity 0.1s', background: 'linear-gradient(#e66465ee, #9198e5ee)', width: '100%', height:  ((shadowPositions[i].p*10)*100) + '%', borderRadius: 2}}
           
           >
 
@@ -108,7 +109,11 @@ const Page = () => {
         display: 'flex', flexDirection: 'row'}}>
           <Mode name="couple" setOperation={setOperation} active={operation == "couple"} />
           <Mode name="passthrough" setOperation={setOperation} active={operation == "passthrough"} />
+          
         </div>
+        {operation == "passthrough" ? 
+            <Manual setPositions={setPositions}></Manual>
+          : null}
       </div>
     </div>
   );
@@ -124,5 +129,39 @@ const Mode = ({ name, active, setOperation }) => <div onClick={() => setOperatio
   }}>
   {name}
 </div>
+
+
+const Manual = ({ setPositions }) =>{
+  const [value, setValue] = useState("0")
+  const [direction, setDirection] = useState(false)
+  const [wavelength, setWavelength] = useState(0.062456762083333*2)
+  const calculate = (dx) => {
+    let pos = Array.from({length: 10}).map((_, i)=>(Number(dx)*i)%(wavelength/2))
+    console.log(pos)
+    if(direction) {
+      pos.reverse()
+    }
+    pos = pos.map(p => 0.082-p)
+    setPositions(pos)
+  }
+
+  return <div
+    style={{
+      padding: 10, paddingInline: 20, margin: 8, backgroundColor: 'rgba(220, 220, 220, 0.4)',
+      borderRadius: 8, WebkitBackdropFilter: 'blur(1px)', backdropFilter: 'blur(1px)',
+      color: '#9d9696',
+      verticalAlign: 'center',
+      boxShadow: '#afa3a3 1px 1px 3px inset, inset rgb(255 255 255 / 96%) -1px -1px 20px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}>
+    <h4>Displacement</h4>
+    {/*<span>Wavelength <input style={{border: '1px solid white', backgroundColor: 'rgb(244, 244, 244)', padding: 10, borderRadius: 8, marginBottom: 10}} value={wavelength} onChange={e=>setWavelength((e.target.value))}></input></span>*/}
+    <input style={{border: '1px solid white', backgroundColor: 'rgb(244, 244, 244)', padding: 10, borderRadius: 8, marginBottom: 10}} value={value} onChange={e=>setValue((e.target.value))}></input>
+    <input type="checkbox" checked={direction} onChange={e=>setDirection(e.target.checked)}></input>
+    <button onClick={()=>calculate(value)}>Activate</button>
+  </div>
+}
 
 export default Page;

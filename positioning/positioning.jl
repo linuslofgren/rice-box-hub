@@ -5,8 +5,8 @@ include("positioning_functions.jl")
 include("types.jl")
 
 
-const WAVELENGTH = 0.12 # meters
-const RIS_LENGTH = 0.3 # meters
+const WAVELENGTH = 0.062456762083333*2 # meters
+const RIS_LENGTH = 0.641 # meters
 const RIS_NUM_ELEMENTS = 10
 const RIS = Surface(WAVELENGTH, RIS_LENGTH, RIS_NUM_ELEMENTS)
 
