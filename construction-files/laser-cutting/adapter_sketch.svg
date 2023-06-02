@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_0" data-name="0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110.69 165.12">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: .71px;
+      }
+    </style>
+  </defs>
+  <g id="LWPOLYLINE">
+    <rect class="cls-1" x=".35" y=".35" width="109.98" height="164.41"/>
+  </g>
+  <g id="CIRCLE">
+    <circle class="cls-1" cx="18.5" cy="122.24" r="6.38"/>
+  </g>
+  <g id="CIRCLE-2" data-name="CIRCLE">
+    <circle class="cls-1" cx="92.2" cy="122.24" r="6.38"/>
+  </g>
+  <g id="CIRCLE-3" data-name="CIRCLE">
+    <circle class="cls-1" cx="55.35" cy="23.03" r="6.38"/>
+  </g>
+  <g id="LINE">
+    <line class="cls-1" x1="110.34" y1="164.76" x2=".35" y2="164.76"/>
+  </g>
+</svg>
