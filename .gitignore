@@ -25,8 +25,9 @@ Cargo.lock
 # Created by https://www.toptal.com/developers/gitignore/api/xcode,node,nextjs,react,julia
 # Edit at https://www.toptal.com/developers/gitignore?templates=xcode,node,nextjs,react,julia
 
-## Arduino ##
-arduino/.vscode/c_cpp_properties.json
+## .vscode ##
+.vscode/
+!/.vscode/settings.json
 
 ## Radio Measurements ##
 radio/__pycache__

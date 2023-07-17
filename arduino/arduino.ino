@@ -22,7 +22,7 @@ void setup() {
     Serial.println(" seconds.");
 
     for (int i=0; i<NUM_ELEMENTS; i++) {
-        // linActs[i].calibratePositionCursed();
+        linActs[i].calibratePositionCursed();
     }
     Serial.print("Calibrated!");
 }
