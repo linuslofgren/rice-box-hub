@@ -47,7 +47,6 @@ const Container = styled.div<{ selected: boolean, text: string, rainbow: boolean
 `
 
 const Button: React.FC<{name: string, active?: boolean, onClick: () => void, rainbow?: boolean}> = ({ name, active, onClick, rainbow }) => {
-  console.log(rainbow)
   return <Container text={name} selected={!!active} onClick={onClick} rainbow={!!rainbow}>
     {name}
   </Container>

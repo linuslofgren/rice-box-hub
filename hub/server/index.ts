@@ -63,11 +63,20 @@ const handleAck = (message: string) => {
   console.log('[WebSocket Server] From Ack channel:', message)
   message = message.substring(message.indexOf('<')+1, message.indexOf('>'))
   const [_config, jobId, timestamp] = message.split('|')
-  const result: AckDataType = { type: 'ris_position_ack', jobId: jobId.length ? jobId : undefined, timestamp: parseInt(timestamp) }
+  const result: AckDataType = { 
+    type: 'ris_position_ack', 
+    jobId: jobId.length ? jobId : undefined, 
+    timestamp: jobId.length ? parseInt(timestamp) : undefined 
+  }
   
   // Supplying no ID means requesting no feedback
-  if(jobId.length === 0) addToWeb(() => Promise.resolve(result)) 
-  else recentAck = result
+  if(jobId.length === 0) {
+    console.log('Skipping measurement')
+    addToWeb(() => Promise.resolve(result)) 
+  }
+  else {
+    recentAck = result
+  } 
 }
 
 await Promise.race([hubServer<AckDataType>(addToRedis, toWebIterator), redisSendLoop(), redisReceiveLoop()]);

@@ -31,6 +31,7 @@ const Page = () => {
         let d = JSON.parse(e.data);
         if(d.type === 'ris_position_ack') {
             waiter.current.confirm(d.jobId as string, d.result)
+            d.jobId && setMagnitude(d.result)
         } else {
             setRisPosition(d.ris);
             setTxPosition(d.tx);
@@ -42,13 +43,13 @@ const Page = () => {
     };
   }, []);
   
-  const submit = (config: number[]) => measurementEnabled ? submitConfigNoFeedback(config) : submitConfigReturn(config) 
+  const submit = (config: number[]) => measurementEnabled ? submitConfigReturn(config) : submitConfigNoFeedback(config) 
 
   const submitConfigReturn: ConfigSubmitter = async (configuration) => {
     const jobId = uuid()
     const operation = { passthrough: configuration, jobId}
-    if (ws.current && ws.current.readyState == ws.current.OPEN) {
-        ws.current.send(JSON.stringify(operation));
+    if (ws.current && ws.current.readyState === ws.current.OPEN) {
+        ws.current.send(JSON.stringify(operation))
         setPositions(configuration)
         return waiter.current.wait(jobId)
     }
@@ -57,7 +58,7 @@ const Page = () => {
 
   const submitConfigNoFeedback = (configuration: number[]) => {
     const operation = { passthrough: configuration }
-    if (ws.current && ws.current.readyState == ws.current.OPEN) {
+    if (ws.current && ws.current.readyState === ws.current.OPEN) {
       ws.current.send(JSON.stringify(operation));
         setPositions(configuration)
     } else {

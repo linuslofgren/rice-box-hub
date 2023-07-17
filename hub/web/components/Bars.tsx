@@ -14,7 +14,7 @@ const Bars: React.FC<BarsProps> = ({ configuration, submitConfiguration, setCurr
     let frac = (r.height - (e.clientY - r.top)) / r.height
     try {
         setCurrentMagnitude(null)
-        submitConfiguration(configuration.map((p, j) => j == i ? frac/10 : p))
+        await submitConfiguration(configuration.map((p, j) => j == i ? frac/10 : p))
     } catch(err) {
         console.log('Failed to submit conf: ', err) // More important to handle in optimize
     }
