@@ -9,6 +9,8 @@ path = "src/main.rs"
 
 [dependencies]
 serialport = "4.2.0"
+rand = "0.8"
+uuid = { version = "0.8", features = ["serde", "v4"] }
 
 [dependencies.redis]
 version = "*"

@@ -75,7 +75,7 @@ function main()
     PIPE = "socket/ris.sock"
     rm(PIPE, force=true)
     server = Sockets.listen(PIPE)
-    println("listening...")
+    println("Julia is listening to socket...")
 
     while true
         conn = Sockets.accept(server)
