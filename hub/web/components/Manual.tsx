@@ -3,7 +3,7 @@ import { NUM_ELMS } from "../constants"
 import { ConfigSubmitter } from "../util/types"
 
 type ManualProps = {
-  submitConfiguration: ConfigSubmitter
+  submitConfiguration: (conf: number[]) => Promise<number> | void
 }
 
 const Manual: React.FC<ManualProps> = ({ submitConfiguration }) => {
