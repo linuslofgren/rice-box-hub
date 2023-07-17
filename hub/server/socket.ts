@@ -1,7 +1,9 @@
+import { Configuration } from "./types.ts";
+
 export const sendToSocket = async (
   data: Record<string, unknown>,
   name = "../../positioning/socket/ris.sock",
-) => {
+): Promise<Configuration> => {
   console.info("[JULIA] Sending on socket to JULIA");
   let conn;
   try {
@@ -25,7 +27,7 @@ export const sendToSocket = async (
   );
   conn.close();
   console.info("[JULIA] Finished sending to JULIA");
-  return resp;
+  return resp.configuration;
 };
 
 export const singleEchoSocketServer = async () => {

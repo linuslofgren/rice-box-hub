@@ -26,7 +26,7 @@ type Angle = {
   angle: number;
 }
 
-type Passthrough = {
+export type Passthrough = {
   passthrough: number[]
 }
 
@@ -42,8 +42,22 @@ export type Configuration = number[];
 
 export type ObjectState = ObjectPositions & { configuration: Configuration };
 
-export type WebSocketMessage = {
+export type PositionUpdate = {
+    type: 'position_update'
   position_update: ObjectPositions;
 } & ObjectPositions;
 
+export type WebSocketMessage = OneOf<[PositionUpdate, Operation]>
+
 export type WebSocketResponse = ObjectState;
+
+export type AckDataType = { type: 'ris_position_ack', jobId?: string, result?: number, timestamp?: number }
+
+export type DisplacementJobResult = { configuration: Configuration, jobId?: string }
+
+export type DisplacementJob = () => Promise<DisplacementJobResult>
+
+export type RFData = {
+  magnitude_dB: number,
+  timestamp: number
+}

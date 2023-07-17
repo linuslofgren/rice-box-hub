@@ -13,3 +13,10 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+.clickable:hover {
+    cursor: pointer;
+}
+.hoverDarken:hover {
+  background-color: #555;
+}

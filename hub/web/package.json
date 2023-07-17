@@ -8,11 +8,12 @@
     "start": "next start"
   },
   "dependencies": {
-    
+    "@types/recharts": "^1.8.24",
     "next": "latest",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    
+    "recharts": "^2.7.2",
+    "uuid": "^9.0.0",
     "ws": "^8.13.0",
     "zod": "^3.0.0"
   },
