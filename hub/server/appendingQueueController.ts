@@ -4,6 +4,7 @@ export function AppendingQueueController<T>() {
   let nextInLine: (() => Promise<T>) | null = null;
   let resolver: ((value: unknown) => void) | null = null;
   let timeoutId: number | null = null;
+  
   const createInfinitePromise = () =>
     new Promise((resolve) => {
       if (timeoutId) {
@@ -13,6 +14,7 @@ export function AppendingQueueController<T>() {
       timeoutId = setTimeout(resolve, MAX_32_SIGNED);
     });
   let stallIndefinitely = createInfinitePromise();
+  
   return {
     iterator: async function* nextJob() {
       while (true) {

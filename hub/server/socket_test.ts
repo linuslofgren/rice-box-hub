@@ -3,7 +3,7 @@ import {
   sendToSocket,
   singleJuliaMockSocketServer,
 } from "./socket.ts";
-import { sleep } from "https://deno.land/x/sleep@v1.2.1/mod.ts";
+// import { sleep } from "https://deno.land/x/sleep@v1.2.1/mod.ts";
 import { assertEquals } from "https://deno.land/std@0.182.0/testing/asserts.ts";
 
 Deno.test("Socket", async (t) => {

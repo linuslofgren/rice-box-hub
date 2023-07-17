@@ -1,5 +1,5 @@
-import { Configuration, Operation, WebSocketMessage } from "./types.ts";
 import { sendToSocket } from "./socket.ts";
+import { DisplacementJob, Operation, Passthrough, WebSocketMessage } from "./types.ts";
 
 const PORT = 8080;
 
@@ -7,22 +7,16 @@ const server = Deno.listen({ port: PORT });
 
 const sockets: { [key: string]: WebSocket } = {};
 
-const calculateDisplacement = async (
-  args: Operation,
-): Promise<Configuration> => {
-  const result = await sendToSocket(args);
-  return result;
-};
+const createCalculateDisplacementJob = (operation: Operation, jobId?: string): DisplacementJob => 
+  async () => {
+      return { configuration: await sendToSocket(operation), jobId}
+  }
 
-const createCalculateDisplacementJob = (args: Operation) => {
-  const calc = async () => {
-    return await calculateDisplacement(args);
-  };
-  return calc;
-};
-export const hubServer = async (
-  add: (jobs: () => Promise<Configuration>) => void,
+export const hubServer = async <ToWebData>(
+  addToRedis: (job: DisplacementJob) => void,
+  toWebIterator: () => AsyncGenerator<ToWebData>
 ) => {
+
   for await (const conn of server) {
     (async () => {
       const httpConn = Deno.serveHttp(conn);
@@ -32,8 +26,16 @@ export const hubServer = async (
         const { socket, response } = Deno.upgradeWebSocket(reqEvent.request);
         const uuid = crypto.randomUUID();
 
-        socket.onopen = () => {
+        socket.onopen = async () => {
           sockets[uuid] = socket;
+          for await(const result of toWebIterator()){
+            if(socket.readyState === WebSocket.OPEN) {
+                console.log('[WebSocket Server] Sending to web: ', result)
+                socket.send(JSON.stringify(result))
+            } else {
+              return // Kill this itererator when socket is closed
+            }
+          }
         };
 
         socket.onmessage = (e) => {
@@ -44,11 +46,12 @@ export const hubServer = async (
               if (id == uuid) continue;
               connection.send(JSON.stringify(message.position_update));
             }
-          } else {
-            const displacement = createCalculateDisplacementJob(
-              message as Operation,
+          } else if(message.passthrough) {
+            const displacementJob = createCalculateDisplacementJob(
+                { passthrough: message.passthrough }, 
+                (message as unknown as Passthrough & { jobId?: string }).jobId
             );
-            add(displacement);
+            addToRedis(displacementJob)
           }
         };
         socket.onclose = () => {
@@ -58,6 +61,7 @@ export const hubServer = async (
         socket.onerror = (e) => {
           console.error("[WebSocket Server]", e);
         };
+
         reqEvent.respondWith(response);
       }
     })();
