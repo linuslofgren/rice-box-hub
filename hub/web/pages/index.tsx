@@ -16,6 +16,7 @@ const Page = () => {
   const [rxPosition, setRxPosition] = useState({ x: 0.6, y: 0.5 });
   const [positions, setPositions] = useState<number[]>(Array(NUM_ELMS).fill(0))
   const [magnitude, setMagnitude] = useState<number | null>(null)
+  const [measurementEnabled, setMeasurementEnabled] = useState(true)
   const [optData, setOptData] = useState<OptDataType[]>([])
   const waiter = useRef(new Waiter<number>())
   const ws = useRef<WebSocket>();
@@ -41,7 +42,9 @@ const Page = () => {
     };
   }, []);
   
-  const submitConfig: ConfigSubmitter = async (configuration) => {
+  const submit = (config: number[]) => measurementEnabled ? submitConfigNoFeedback(config) : submitConfigReturn(config) 
+
+  const submitConfigReturn: ConfigSubmitter = async (configuration) => {
     const jobId = uuid()
     const operation = { passthrough: configuration, jobId}
     if (ws.current && ws.current.readyState == ws.current.OPEN) {
@@ -52,7 +55,7 @@ const Page = () => {
     throw 'Socket was not open'
   }
 
-  const submitConfigNoFeedback = async (configuration: number[]) => {
+  const submitConfigNoFeedback = (configuration: number[]) => {
     const operation = { passthrough: configuration }
     if (ws.current && ws.current.readyState == ws.current.OPEN) {
       ws.current.send(JSON.stringify(operation));
@@ -74,8 +77,14 @@ const Page = () => {
       <h2 style={{ alignSelf: 'flex-start' }}>Rice-Box HUB Ctrl</h2>
       <h3>Positioning</h3>
       <div style={{ display: "flex", flexDirection: "column"}}>
-        <Bars setCurrentMagnitude={mag => setMagnitude(mag)} configuration={positions} submitConfiguration={submitConfig} submitConfigNoFeedback={submitConfigNoFeedback} />
-        <p>Throughput: {magnitude ? `${magnitude.toFixed(1)}dB` : '--'}</p>
+        <Bars setCurrentMagnitude={mag => setMagnitude(mag)} configuration={positions} submitConfiguration={submit} />
+        <div>
+          <p>Throughput: {magnitude ? `${magnitude.toFixed(1)}dB` : '--'}</p>
+          <div>
+            <input id="toggle" type="checkbox" checked={measurementEnabled} onChange={e => setMeasurementEnabled(e.target.checked)} />
+            <label htmlFor="toggle">Enable Measurement</label>
+          </div>
+        </div>
       </div>
       
       <div style={{
@@ -85,19 +94,20 @@ const Page = () => {
         borderRadius: 8, paddingInline: 20, paddingBlock: 4
       }}>
         <h3>Mode select</h3>
+        
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <Button name="couple" onClick={() => setOperation('couple')} active={operation == "couple"} />
           <Button name="passthrough" onClick={() => setOperation('passthrough')} active={operation == "passthrough"} />
           <Button name="optimize" onClick={() => setOperation('optimize')} active={operation == "optimize"} />
         </div>
+       
         { operation == "passthrough" ? 
-            <Manual submitConfiguration={submitConfig}></Manual>
+            <Manual submitConfiguration={submit}></Manual>
           : null
         }
         { operation == "optimize" ? <>
-            <Optimize 
-              setCurrentMagnitude={mag => setMagnitude(mag)}
-              submitConfiguration={submitConfig} 
+            <Optimize
+              submitConfiguration={submitConfigReturn} 
               configuration={positions} 
               addOptData={measurement => setOptData(prev => [...prev, { index: prev.length, magnitude: measurement }])}
             />

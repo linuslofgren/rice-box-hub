@@ -1,26 +1,20 @@
 import { MouseEvent, useState } from "react";
-import { ConfigSubmitter } from "../util/types";
 
 type BarsProps = {
   configuration: number[]
-  submitConfiguration: ConfigSubmitter
-  submitConfigNoFeedback: (config: number[]) => void
+  submitConfiguration: (conf: number[]) => Promise<number> | void
   setCurrentMagnitude: (mag: number) => void
 }
 
-const Bars: React.FC<BarsProps> = ({ configuration, submitConfiguration, submitConfigNoFeedback, setCurrentMagnitude }) => {
+const Bars: React.FC<BarsProps> = ({ configuration, submitConfiguration, setCurrentMagnitude }) => {
   const [shadowPositions, setShadowPositions] = useState(Array.from({length: 10}).map(_=>({p: 0, show: false})))
 
   const onClick = async (e: MouseEvent<HTMLDivElement>, i: number) => {
     const r = e.currentTarget.getBoundingClientRect();
     let frac = (r.height - (e.clientY - r.top)) / r.height
     try {
-        // submitConfigNoFeedback(configuration.map((p, j) => j == i ? frac/10 : p))
         setCurrentMagnitude(null)
-        const result = await submitConfiguration(configuration.map((p, j) => j == i ? frac/10 : p))
-        console.log("Result: ", result)
-        setCurrentMagnitude(result)
-        
+        submitConfiguration(configuration.map((p, j) => j == i ? frac/10 : p))
     } catch(err) {
         console.log('Failed to submit conf: ', err) // More important to handle in optimize
     }

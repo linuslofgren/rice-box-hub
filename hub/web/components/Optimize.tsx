@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from "react"
 import { Monkey } from "../util/Monkey"
-import { ConfigSubmitter, OptDataType } from "../util/types"
+import { ConfigSubmitter } from "../util/types"
 import Button from "./Button"
 
 type OptimizeProps = {
   configuration: number[]
   submitConfiguration: ConfigSubmitter
   addOptData: (measurement: number) => void
-  setCurrentMagnitude: (mag: number) => void
 }
 
-const Optimize: React.FC<OptimizeProps> = ({ configuration, submitConfiguration, addOptData, setCurrentMagnitude }) => {
+const Optimize: React.FC<OptimizeProps> = ({ configuration, submitConfiguration, addOptData }) => {
   const monkey = useRef(new Monkey()) 
   const [mode, setMode] = useState<'max' | 'min' | 'none'>('none')
 
@@ -18,7 +17,6 @@ const Optimize: React.FC<OptimizeProps> = ({ configuration, submitConfiguration,
     const result = await submitConfiguration([...conf])
     console.log('Confirmed: ', result)
     addOptData(result)
-    setCurrentMagnitude(result)
     return result
   }
 
@@ -36,14 +34,14 @@ const Optimize: React.FC<OptimizeProps> = ({ configuration, submitConfiguration,
     monkey.current.setTestFunction(test)
   }, [monkey.current])  
 
-  return <div>
-    <h4 style={{ textAlign: "center" }}>Monkey Learning</h4>
+  return <div style={{ marginTop: 20}}>
+    <h4 style={{ textAlign: "center" }}>Monkey Learning 🐒</h4>
     <div style={{ display: "flex"}}>
-      <Button active={mode === 'min'} name="Minimize" onClick={() => startOpt(true)} />
-      <Button active={mode === 'max'} name="Maximize" onClick={() => startOpt(false)} />
+      <Button rainbow={mode === 'min'} name="Minimize"  onClick={() => startOpt(true)} />
+      <Button rainbow={mode === 'max'} name="Maximize" onClick={() => startOpt(false)} />
+      <Button name="Cancel" onClick={stopOpt}></Button>
     </div>
     <p>{mode}</p>
-    <Button name="Cancel" onClick={stopOpt}></Button>
   </div>
 }
 

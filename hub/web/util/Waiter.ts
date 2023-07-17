@@ -23,7 +23,9 @@ export class Waiter<ResultType> {
     confirm(jobId: string, result: ResultType) {
         if(this.currentJob === jobId){
             this.currentJob = null
-            return this.resolver(result)    
+            this.resolver(result)    
+            return true 
         }
+        return false
     }
 } 
