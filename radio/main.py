@@ -12,7 +12,7 @@ except:
   print('No redis connection')
   exit()
 
-CSV_FREQUENCY = '2400000618'
+CSV_FREQUENCY = '2400000000'
 data_dir = 'C:/Users/oskar/Documents/satsagen/Export'
 
 def get_latest_data():
@@ -30,6 +30,7 @@ def get_latest_data():
     for line in data:
       if line[0] == CSV_FREQUENCY:
         return line[1], util.extract_time(latest_file)
+    exit('Chosen frequency might be wrong')
         
 print('Starting loop')
 latest_mag, latest_time = 0, 0

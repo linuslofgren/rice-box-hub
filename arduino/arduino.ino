@@ -13,7 +13,6 @@ LinearActuator linActs[NUM_ELEMENTS];
 
 void setup() {
     Serial.begin(9600);
-    
     for (int i=0; i<NUM_ELEMENTS; i++) {
         linActs[i] = LinearActuator(STEP_PINS[i], DIR_PINS[i], STALL_PINS[i], ENABLE_PIN[i]);
     }
@@ -46,10 +45,8 @@ void loop() {
     Serial.print('<');
     for (int i=0; i<NUM_ELEMENTS; i++)
     {
-        Serial.print(configuration[i]);
+        Serial.print(configuration[i], 4); // 4 decimal precision for printing back positions is enough  
         if(i != NUM_ELEMENTS-1) Serial.print(',');
     }
     Serial.print('|' + jobID + '>');
-
-
 }

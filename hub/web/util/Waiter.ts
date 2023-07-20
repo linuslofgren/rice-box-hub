@@ -17,7 +17,7 @@ export class Waiter<ResultType> {
             this.timeout = setTimeout(() => {
                 try {reject('Timeout')} catch {} // If it's already resolved
                 if(this.currentJob === jobId) this.currentJob = null
-            }, 4000)
+            }, 15000)
         })
     }
     confirm(jobId: string, result: ResultType) {

@@ -5,6 +5,7 @@ import { AckDataType, DisplacementJobResult, RFData } from "./types.ts";
 
 let publishRedis: Redis;
 let redisSub: RedisSubscription;
+const TIME_PADDING = 500 //milliseconds padding to allow a moment of swinging
 
 try {
   publishRedis = await connect({
@@ -27,7 +28,7 @@ const { iterator: toWebIterator, add: addToWeb } = AppendingQueueController<AckD
 
 const format = new Intl.NumberFormat("en-US", {
   style: "decimal",
-  maximumFractionDigits: 2, // Centimeter resolution??
+  maximumFractionDigits: 3,
 }).format;
 
 const redisSendLoop = async () => {
@@ -51,8 +52,7 @@ const redisReceiveLoop = async () => {
       latestMeasurement = measurement
     }
     if(!latestMeasurement || !recentAck || !recentAck.timestamp) continue // TODO make sure acks have timestamps
-    if(latestMeasurement.timestamp < recentAck.timestamp) continue
-
+    if(latestMeasurement.timestamp - TIME_PADDING < recentAck.timestamp) continue
     const ack: AckDataType = { ...recentAck, result: latestMeasurement.magnitude_dB }
     addToWeb(() => Promise.resolve(ack))
     latestMeasurement = null

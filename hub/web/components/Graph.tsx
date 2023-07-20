@@ -3,7 +3,6 @@ import { OptDataType } from "../util/types";
 
 
 const Graph: React.FC<{ data: OptDataType[]}> = ({ data }) => {
-  console.log(data)
 
   return <div style={{ marginTop: 30, width: '100%', padding: 40, boxSizing: 'border-box', maxWidth: 1500, backgroundColor: 'white'}}>
     <h3 style={{ marginLeft: 60 }}>Optimization Progress</h3>

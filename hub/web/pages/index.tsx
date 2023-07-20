@@ -78,14 +78,7 @@ const Page = () => {
       <h2 style={{ alignSelf: 'flex-start' }}>Rice-Box HUB Ctrl</h2>
       <h3>Positioning</h3>
       <div style={{ display: "flex", flexDirection: "column"}}>
-        <Bars setCurrentMagnitude={mag => setMagnitude(mag)} configuration={positions} submitConfiguration={submit} />
-        <div>
-          <p>Throughput: {magnitude ? `${magnitude.toFixed(1)}dB` : '--'}</p>
-          <div>
-            <input id="toggle" type="checkbox" checked={measurementEnabled} onChange={e => setMeasurementEnabled(e.target.checked)} />
-            <label htmlFor="toggle">Enable Measurement</label>
-          </div>
-        </div>
+        <Bars currentMagnitude={magnitude} measurementEnabled={measurementEnabled} setMeasurementEnabled={setMeasurementEnabled} setCurrentMagnitude={mag => setMagnitude(mag)} configuration={positions} submitConfiguration={submit} />
       </div>
       
       <div style={{
@@ -103,7 +96,7 @@ const Page = () => {
         </div>
        
         { operation == "passthrough" ? 
-            <Manual submitConfiguration={submit}></Manual>
+            <Manual setCurrentMagnitude={setMagnitude} submitConfiguration={submit}></Manual>
           : null
         }
         { operation == "optimize" ? <>

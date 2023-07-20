@@ -1,22 +1,22 @@
-import { useState } from "react"
-import { NUM_ELMS } from "../constants"
-import { ConfigSubmitter } from "../util/types"
+import { Dispatch, SetStateAction, useState } from "react"
+import { NUM_ELMS, WAVELEN } from "../constants"
 
 type ManualProps = {
   submitConfiguration: (conf: number[]) => Promise<number> | void
+  setCurrentMagnitude: Dispatch<SetStateAction<number | null>>
 }
 
-const Manual: React.FC<ManualProps> = ({ submitConfiguration }) => {
+const Manual: React.FC<ManualProps> = ({ submitConfiguration, setCurrentMagnitude }) => {
   const [value, setValue] = useState(0)
   const [direction, setDirection] = useState(false)
-  const [wavelength, setWavelength] = useState(0.062456762083333*2)
 
   const calculate = (dx: number) => {
-    let pos = Array(NUM_ELMS).map((_, i)=>(dx*i)%(wavelength/2))
+    setCurrentMagnitude(null)
+    let pos = [...Array(NUM_ELMS).keys()].map((_, i)=>(dx*i)%(WAVELEN/2))
     if(direction) {
       pos.reverse()
     }
-    pos = pos.map(p => 0.082-p)
+    // pos = pos.map(p => 0.082-p)
     submitConfiguration(pos)
   }
 
@@ -31,14 +31,14 @@ const Manual: React.FC<ManualProps> = ({ submitConfiguration }) => {
       flexDirection: 'column',
       alignItems: 'center'
     }}>
-    <h4>Displacement</h4>
-    {/*<span>Wavelength <input style={{border: '1px solid white', backgroundColor: 'rgb(244, 244, 244)', padding: 10, borderRadius: 8, marginBottom: 10}} value={wavelength} onChange={e=>setWavelength((e.target.value))}></input></span>*/}
-    <input 
-      style={{border: '1px solid white', backgroundColor: 'rgb(244, 244, 244)', padding: 10, borderRadius: 8, marginBottom: 10}} 
-      value={value} onChange={e => setValue(Number(e.target.value))} 
-    />
-    <input type="checkbox" checked={direction} onChange={e=>setDirection(e.target.checked)}></input>
-    <button onClick={()=>calculate(value)}>Activate</button>
+      <h4>Displacement</h4>
+      {/*<span>Wavelength <input style={{border: '1px solid white', backgroundColor: 'rgb(244, 244, 244)', padding: 10, borderRadius: 8, marginBottom: 10}} value={wavelength} onChange={e=>setWavelength((e.target.value))}></input></span>*/}
+      <input 
+        style={{border: '1px solid white', backgroundColor: 'rgb(244, 244, 244)', padding: 10, borderRadius: 8, marginBottom: 10}} 
+        value={value} onChange={e => setValue(Number(e.target.value))} 
+        />
+      <input type="checkbox" checked={direction} onChange={e=>setDirection(e.target.checked)}></input>
+      <button onClick={()=>calculate(value)}>Activate</button>
   </div>
 }
 

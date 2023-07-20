@@ -9,16 +9,17 @@ class LinearActuator : private LinActStepper {
         LinearActuator(uint8_t stepPin, uint8_t dirPin, uint8_t stallPin, uint8_t enablePin) : LinActStepper(stepPin, dirPin, stallPin, enablePin) {}
 
         /*
-        Sets position in mm from front end. Positive direction is defined as "backwards" i.e. towards the motor.
+        Sets position in m from front end. Negative direction is defined as "backwards" i.e. towards the motor.
         Must be calibrated before use.
         */
         void setPosition(float newPosition) {
-            if (newPosition > position) {
+            newPosition = newPosition*1000;
+            if (newPosition < position) {
                 setDirBackward();
-                step(newPosition-position);
+                step(position-newPosition);
             } else {
                 setDirForward();
-                step(position-newPosition);
+                step(newPosition-position);
             }
             position = newPosition;
         }
@@ -30,7 +31,7 @@ class LinearActuator : private LinActStepper {
         void calibratePositionCursed() {
             setDirBackward();
             step(82.0);
-            position = 82.0;
+            position = 0.0;
         }
 
         void testSpeed() {
