@@ -1,7 +1,7 @@
 import { Redis, RedisSubscription, connect } from "https://deno.land/x/redis@v0.29.3/mod.ts";
 import { AppendingQueueController } from "./appendingQueueController.ts";
 import { hubServer } from "./server.ts";
-import { AckDataType, DisplacementJobResult, RFData } from "./types.ts";
+import { AckDataType, DisplacementJobResult, RFData, RFThroughType } from "./types.ts";
 
 let publishRedis: Redis;
 let redisSub: RedisSubscription;
@@ -24,7 +24,7 @@ try {
 console.log('[WebSocket Server] Subscribed to Redis')
 
 const { iterator: toRedisIterator, add: addToRedis } = AppendingQueueController<DisplacementJobResult>();
-const { iterator: toWebIterator, add: addToWeb } = AppendingQueueController<AckDataType>();
+const { iterator: broascastIterator, add: broadcast } = AppendingQueueController<AckDataType | RFThroughType>();
 
 const format = new Intl.NumberFormat("en-US", {
   style: "decimal",
@@ -50,11 +50,12 @@ const redisReceiveLoop = async () => {
     } else if(channel === 'RF_throughput') {
       const measurement: RFData = JSON.parse(message)
       latestMeasurement = measurement
+      broadcast(() => Promise.resolve({ ...measurement, type: 'RF_throughput'}))
     }
     if(!latestMeasurement || !recentAck || !recentAck.timestamp) continue // TODO make sure acks have timestamps
     if(latestMeasurement.timestamp - TIME_PADDING < recentAck.timestamp) continue
     const ack: AckDataType = { ...recentAck, result: latestMeasurement.magnitude_dB }
-    addToWeb(() => Promise.resolve(ack))
+    broadcast(() => Promise.resolve(ack))
     latestMeasurement = null
     recentAck = null
   }
@@ -72,11 +73,11 @@ const handleAck = (message: string) => {
   // Supplying no ID means requesting no feedback
   if(jobId.length === 0) {
     console.log('Skipping measurement')
-    addToWeb(() => Promise.resolve(result)) 
+    broadcast(() => Promise.resolve(result)) 
   }
   else {
     recentAck = result
   } 
 }
 
-await Promise.race([hubServer<AckDataType>(addToRedis, toWebIterator), redisSendLoop(), redisReceiveLoop()]);
+await Promise.race([hubServer(addToRedis, broascastIterator), redisSendLoop(), redisReceiveLoop()]);

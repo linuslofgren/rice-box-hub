@@ -1,19 +1,34 @@
 import { ResponsiveContainer, LineChart, CartesianGrid, Tooltip, YAxis, XAxis, Legend, Line, Label } from "recharts";
 import { OptDataType } from "../util/types";
+import Arrow from "./Arrow";
+import { Dispatch, SetStateAction } from "react";
 
+type GraphProps = { 
+  data: OptDataType[], 
+  style?: any, 
+  graphHeight: number, 
+  sideBySide: boolean
+  onSideBySide: () => void
+}
 
-const Graph: React.FC<{ data: OptDataType[]}> = ({ data }) => {
+const Graph: React.FC<GraphProps> = ({ data, style, graphHeight, sideBySide, onSideBySide }) => {
+  console.log(data)
 
-  return <div style={{ marginTop: 30, width: '100%', padding: 40, boxSizing: 'border-box', maxWidth: 1500, backgroundColor: 'white'}}>
-    <h3 style={{ marginLeft: 60 }}>Optimization Progress</h3>
-    <ResponsiveContainer minWidth={500} minHeight={600}>
+  return <div style={{ width: '100%', padding: 40, boxSizing: 'border-box', maxWidth: 1500, backgroundColor: 'white' , ...style}}>
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <h3 style={{ marginLeft: 60, marginBottom: 40, marginTop: 0 }}>Optimization Progress</h3>
+      <div>
+        <Arrow rotate={sideBySide ? 270 : 90} onClick={onSideBySide} />
+      </div>
+    </div>
+    <ResponsiveContainer minWidth={400} minHeight={100} height={graphHeight}>
     <LineChart data={data}>
       <CartesianGrid strokeDasharray="3 3" vertical={false} />
       <XAxis dataKey='index'>
         <Label value='Configuration' position='insideBottom' offset={-5} />
       </XAxis>
       <YAxis dataKey='magnitude'>
-        <Label value='Magnitude' angle={-90} position='insideLeft' />
+        <Label value='Magnitude' angle={-90} position='left' offset={0} />
       </YAxis>
       <Tooltip />
       {/* <Legend /> */}

@@ -52,6 +52,7 @@ export type WebSocketMessage = OneOf<[PositionUpdate, Operation]>
 export type WebSocketResponse = ObjectState;
 
 export type AckDataType = { type: 'ris_position_ack', jobId?: string, result?: number, timestamp?: number }
+export type RFThroughType = { type: 'RF_throughput' } & RFData 
 
 export type DisplacementJobResult = { configuration: Configuration, jobId?: string }
 

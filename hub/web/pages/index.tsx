@@ -17,21 +17,25 @@ const Page = () => {
   const [positions, setPositions] = useState<number[]>(Array(NUM_ELMS).fill(0))
   const [magnitude, setMagnitude] = useState<number | null>(null)
   const [measurementEnabled, setMeasurementEnabled] = useState(true)
+  const [realtimeMags, setRealtimeMags] = useState<OptDataType[]>([])
   const [optData, setOptData] = useState<OptDataType[]>([])
+  const [sideBySide, setSideBySide] = useState(false)
   const waiter = useRef(new Waiter<number>())
   const ws = useRef<WebSocket>();
 
-
   useEffect(() => {
-    ws.current = new WebSocket("ws://"+window.location.hostname+":8080");
-    ws.current.onopen = (event) => {};
+    if(!ws.current) return
     ws.current.onmessage = (e) => {
-      console.log('received: ', e.data);
       try {
         let d = JSON.parse(e.data);
         if(d.type === 'ris_position_ack') {
             waiter.current.confirm(d.jobId as string, d.result)
             d.jobId && setMagnitude(d.result)
+        }
+        else if(d.type === 'RF_throughput'){
+          if(operation === 'realtime') {
+            setRealtimeMags(prev => [...prev, {index: prev.length, magnitude: d.magnitude_dB }])
+          }
         } else {
             setRisPosition(d.ris);
             setTxPosition(d.tx);
@@ -41,6 +45,11 @@ const Page = () => {
 
       }
     };
+  }, [operation])
+
+  useEffect(() => {
+    ws.current = new WebSocket("ws://"+window.location.hostname+":8080");
+    ws.current.onopen = (event) => {};
   }, []);
   
   const submit = (config: number[]) => measurementEnabled ? submitConfigReturn(config) : submitConfigNoFeedback(config) 
@@ -66,6 +75,11 @@ const Page = () => {
     }
   }
 
+  let graphData: OptDataType[] = [] 
+  if(operation === 'optimize') graphData = optData
+  else if(operation === 'realtime') graphData = realtimeMags
+
+
   return (
     <div
       style={{
@@ -76,9 +90,21 @@ const Page = () => {
       }}
     >
       <h2 style={{ alignSelf: 'flex-start' }}>Rice-Box HUB Ctrl</h2>
-      <h3>Positioning</h3>
-      <div style={{ display: "flex", flexDirection: "column"}}>
-        <Bars currentMagnitude={magnitude} measurementEnabled={measurementEnabled} setMeasurementEnabled={setMeasurementEnabled} setCurrentMagnitude={mag => setMagnitude(mag)} configuration={positions} submitConfiguration={submit} />
+      <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+        <div style={{ display: "flex", flexDirection: "column"}}>
+          <h3>Positioning</h3>
+          <Bars currentMagnitude={magnitude} measurementEnabled={measurementEnabled} setMeasurementEnabled={setMeasurementEnabled} setCurrentMagnitude={mag => setMagnitude(mag)} configuration={positions} submitConfiguration={submit} />
+        </div>
+        {
+          (['optimize', 'realtime'].includes(operation)) && sideBySide ? 
+            <Graph 
+              onSideBySide={() => setSideBySide(false)} 
+              sideBySide={true} 
+              data={graphData} 
+              graphHeight={260} 
+              style={{ width: '50%', paddingLeft: 40 }} 
+            /> : null
+        }
       </div>
       
       <div style={{
@@ -93,6 +119,7 @@ const Page = () => {
           <Button name="couple" onClick={() => setOperation('couple')} active={operation == "couple"} />
           <Button name="passthrough" onClick={() => setOperation('passthrough')} active={operation == "passthrough"} />
           <Button name="optimize" onClick={() => setOperation('optimize')} active={operation == "optimize"} />
+          <Button name="realtime" onClick={() => setOperation('realtime')} active={operation == "realtime"} />
         </div>
        
         { operation == "passthrough" ? 
@@ -108,9 +135,14 @@ const Page = () => {
           </>
           : null
         }
+        { operation === "realtime" ? <>
+            <h3>Realtime Measurement</h3>
+            <Button name="Clear data" onClick={() => setRealtimeMags([])}></Button>
+          </> : null
+        }
       </div>
       {
-        operation === 'optimize' ? <Graph data={optData} /> : null
+        (['optimize', 'realtime'].includes(operation)) && !sideBySide ? <Graph graphHeight={600} sideBySide={false} onSideBySide={() => setSideBySide(true)} data={graphData} /> : null
       }
       
     </div>

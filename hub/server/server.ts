@@ -12,9 +12,9 @@ const createCalculateDisplacementJob = (operation: Operation, jobId?: string): D
       return { configuration: await sendToSocket(operation), jobId}
   }
 
-export const hubServer = async <ToWebData>(
+export const hubServer = async (
   addToRedis: (job: DisplacementJob) => void,
-  toWebIterator: () => AsyncGenerator<ToWebData>
+  broadcastIterator: () => AsyncGenerator
 ) => {
 
   for await (const conn of server) {
@@ -28,9 +28,9 @@ export const hubServer = async <ToWebData>(
 
         socket.onopen = async () => {
           sockets[uuid] = socket;
-          for await(const result of toWebIterator()){
+          for await(const result of broadcastIterator()){
             if(socket.readyState === WebSocket.OPEN) {
-                console.log('[WebSocket Server] Sending to web: ', result)
+                console.log('[WebSocket Server] Broadcasting: ', result)
                 socket.send(JSON.stringify(result))
             } else {
               return // Kill this itererator when socket is closed
@@ -41,12 +41,11 @@ export const hubServer = async <ToWebData>(
         socket.onmessage = (e) => {
           const message: WebSocketMessage = JSON.parse(e.data);
           console.log("[WebSocket Server] Got", message, "on websocket");
-          if (message.position_update) {
-            for (const [id, connection] of Object.entries(sockets)) {
-              if (id == uuid) continue;
-              connection.send(JSON.stringify(message.position_update));
-            }
-          } else if(message.passthrough) {
+          for (const [id, connection] of Object.entries(sockets)) {
+            if (id == uuid) continue;
+            connection.send(e.data);
+          }
+          if(message.passthrough) {
             const displacementJob = createCalculateDisplacementJob(
                 { passthrough: message.passthrough }, 
                 (message as unknown as Passthrough & { jobId?: string }).jobId

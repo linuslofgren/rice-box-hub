@@ -2,6 +2,7 @@ import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import UpDownBtn from "./UpDownBtn";
 import styled from 'styled-components'
 import { MAX_DISP } from '../constants'
+import Arrow from "./Arrow";
 
 const Container = styled.div`
   display: flex; flex-direction: column;
@@ -54,7 +55,7 @@ const Bars: React.FC<BarsProps> = ({ configuration, submitConfiguration, setCurr
     setShadowPositions(positions => positions.map((p, j) => j == i ? ({ show: true, p: frac * MAX_DISP }) : p))
   }
   return <Container>
-    <div style={{ display: 'flex', flexDirection: facingFront ? 'row-reverse' : 'row', marginTop: 25 }}>
+    <div style={{ display: 'flex', flexDirection: facingFront ? 'row-reverse' : 'row', marginTop: 1 }}>
       {(configuration).map((pos, i) =>
         <div key={i}>
           <UpDownBtn onDown={() => onSetPosition(facingFront ? MAX_DISP : 0, i)} onUp={() => onSetPosition(facingFront ? 0 : MAX_DISP, i)} />
@@ -87,7 +88,7 @@ const Bars: React.FC<BarsProps> = ({ configuration, submitConfiguration, setCurr
         </div>
       </div>
       <p onClick={() => setFacingFront(prev => !prev)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', paddingTop: 5 }}>
-        <Arrow flip={facingFront} /> 🍚
+        <Arrow rotate={facingFront ? 180 : 0} /> 🍚
       </p>
     </div>
   </Container>
@@ -100,6 +101,3 @@ const fracHeight = (e: MouseEvent<HTMLDivElement>) => {
   let frac = (r.height - (e.clientY - r.top)) / r.height
   return frac
 }
-
-const Arrow: React.FC<{ flip?: boolean, onClick?: () => void }> = ({ flip, onClick }) =>
-  <svg width={26} style={{ transform: `rotate(${flip ? 180 : 0}deg)` }} onClick={onClick} focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
