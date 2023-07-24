@@ -12,11 +12,24 @@ const createCalculateDisplacementJob = (operation: Operation, jobId?: string): D
       return { configuration: await sendToSocket(operation), jobId}
   }
 
+const startLoop = async (iterator: () => AsyncGenerator) => {
+  for await(const result of iterator()){
+    for(const [id, socket] of Object.entries(sockets)) {
+      if(socket.readyState === WebSocket.OPEN) {
+        console.log('[WebSocket Server] Broadcasting: ', result)
+        socket.send(JSON.stringify(result))
+      } else {
+        // nothing
+      }
+    }
+  }
+}
+
 export const hubServer = async (
   addToRedis: (job: DisplacementJob) => void,
   broadcastIterator: () => AsyncGenerator
 ) => {
-
+  startLoop(broadcastIterator)
   for await (const conn of server) {
     (async () => {
       const httpConn = Deno.serveHttp(conn);
@@ -26,16 +39,8 @@ export const hubServer = async (
         const { socket, response } = Deno.upgradeWebSocket(reqEvent.request);
         const uuid = crypto.randomUUID();
 
-        socket.onopen = async () => {
+        socket.onopen = () => {
           sockets[uuid] = socket;
-          for await(const result of broadcastIterator()){
-            if(socket.readyState === WebSocket.OPEN) {
-                console.log('[WebSocket Server] Broadcasting: ', result)
-                socket.send(JSON.stringify(result))
-            } else {
-              return // Kill this itererator when socket is closed
-            }
-          }
         };
 
         socket.onmessage = (e) => {

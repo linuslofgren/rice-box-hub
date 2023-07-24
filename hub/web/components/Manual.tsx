@@ -7,10 +7,11 @@ type ManualProps = {
 }
 
 const Manual: React.FC<ManualProps> = ({ submitConfiguration, setCurrentMagnitude }) => {
-  const [value, setValue] = useState(0)
+  const [value, setValue] = useState("0")
   const [direction, setDirection] = useState(false)
 
-  const calculate = (dx: number) => {
+  const calculate = () => {
+    const dx = parseInt(value)/1000 // mm to m
     setCurrentMagnitude(null)
     let pos = [...Array(NUM_ELMS).keys()].map((_, i)=>(dx*i)%(WAVELEN/2))
     if(direction) {
@@ -31,14 +32,14 @@ const Manual: React.FC<ManualProps> = ({ submitConfiguration, setCurrentMagnitud
       flexDirection: 'column',
       alignItems: 'center'
     }}>
-      <h4>Displacement</h4>
+      <h4>Displacement (mm)</h4>
       {/*<span>Wavelength <input style={{border: '1px solid white', backgroundColor: 'rgb(244, 244, 244)', padding: 10, borderRadius: 8, marginBottom: 10}} value={wavelength} onChange={e=>setWavelength((e.target.value))}></input></span>*/}
       <input 
         style={{border: '1px solid white', backgroundColor: 'rgb(244, 244, 244)', padding: 10, borderRadius: 8, marginBottom: 10}} 
-        value={value} onChange={e => setValue(Number(e.target.value))} 
+        value={value} onChange={e => setValue(e.target.value)} 
         />
       <input type="checkbox" checked={direction} onChange={e=>setDirection(e.target.checked)}></input>
-      <button onClick={()=>calculate(value)}>Activate</button>
+      <button onClick={calculate}>Activate</button>
   </div>
 }
 
