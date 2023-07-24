@@ -23,33 +23,37 @@ const Page = () => {
   const waiter = useRef(new Waiter<number>())
   const ws = useRef<WebSocket>();
 
+  const createOnMessage = () => (e: MessageEvent) => {
+    try {
+      let d = JSON.parse(e.data);
+      if(d.type === 'ris_position_ack') {
+          console.log('Ack', e.data)
+          waiter.current.confirm(d.jobId as string, d.result)
+          d.jobId && setMagnitude(d.result)
+      }
+      else if(d.type === 'RF_throughput'){
+        if(operation === 'realtime') {
+          setRealtimeMags(prev => [...prev, {index: prev.length, magnitude: d.magnitude_dB }])
+        }
+      } else {
+          setRisPosition(d.ris);
+          setTxPosition(d.tx);
+          setRxPosition(d.rx);
+      }
+    } catch {
+  
+    }
+  }
+
   useEffect(() => {
     if(!ws.current) return
-    ws.current.onmessage = (e) => {
-      try {
-        let d = JSON.parse(e.data);
-        if(d.type === 'ris_position_ack') {
-            waiter.current.confirm(d.jobId as string, d.result)
-            d.jobId && setMagnitude(d.result)
-        }
-        else if(d.type === 'RF_throughput'){
-          if(operation === 'realtime') {
-            setRealtimeMags(prev => [...prev, {index: prev.length, magnitude: d.magnitude_dB }])
-          }
-        } else {
-            setRisPosition(d.ris);
-            setTxPosition(d.tx);
-            setRxPosition(d.rx);
-        }
-      } catch {
-
-      }
-    };
+    ws.current.onmessage = createOnMessage()
   }, [operation])
 
   useEffect(() => {
     ws.current = new WebSocket("ws://"+window.location.hostname+":8080");
     ws.current.onopen = (event) => {};
+    ws.current.onmessage = createOnMessage()
   }, []);
   
   const submit = (config: number[]) => measurementEnabled ? submitConfigReturn(config) : submitConfigNoFeedback(config) 
