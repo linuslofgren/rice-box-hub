@@ -1,7 +1,6 @@
-import { ResponsiveContainer, LineChart, CartesianGrid, Tooltip, YAxis, XAxis, Legend, Line, Label } from "recharts";
+import { CartesianGrid, Label, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { OptDataType } from "../util/types";
 import Arrow from "./Arrow";
-import { Dispatch, SetStateAction } from "react";
 
 type GraphProps = { 
   data: OptDataType[], 
@@ -25,10 +24,10 @@ const Graph: React.FC<GraphProps> = ({ data, style, graphHeight, sideBySide, onS
     <LineChart data={data}>
       <CartesianGrid strokeDasharray="3 3" vertical={false} />
       <XAxis dataKey='index'>
-        <Label value='Configuration' position='insideBottom' offset={-5} />
+        <Label value='Configuration number' position='insideBottom' offset={-5} />
       </XAxis>
       <YAxis dataKey='magnitude'>
-        <Label value='Magnitude' angle={-90} position='left' offset={0} />
+        <Label value='Magnitude (dB)' angle={-90} position='left' offset={-1} />
       </YAxis>
       <Tooltip />
       {/* <Legend /> */}

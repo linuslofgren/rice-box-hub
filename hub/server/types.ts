@@ -1,3 +1,4 @@
+
 export type Position = {
   x: number;
   y: number;
@@ -14,7 +15,7 @@ type OneOf<T extends Record<string | number | symbol, unknown>[]> = {
   [K in keyof T]: Expand<T[K] & Partial<Record<Exclude<UnionKeys<T[number]>, keyof T[K]>, never>>>;
 }[number];
 
-type Couple = {
+export type Couple = {
   couple: ObjectPositions;
 }
 
@@ -32,11 +33,12 @@ export type Passthrough = {
 
 export type Operation = OneOf<[Couple, Focus, Angle, Passthrough]>
 
-type ObjectPositions = {
+export type ObjectPositions = {
   tx: Position;
   rx: Position;
   ris: Position;
 };
+
 
 export type Configuration = number[];
 
@@ -51,7 +53,8 @@ export type WebSocketMessage = OneOf<[PositionUpdate, Operation]>
 
 export type WebSocketResponse = ObjectState;
 
-export type AckDataType = { type: 'ris_position_ack', jobId?: string, result?: number, timestamp?: number }
+export type AckDataType = { type: 'ris_position_ack', jobId?: string, result?: number, timestamp?: number, configuration: number[] }
+
 export type RFThroughType = { type: 'RF_throughput' } & RFData 
 
 export type DisplacementJobResult = { configuration: Configuration, jobId?: string }

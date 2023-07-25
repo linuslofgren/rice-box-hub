@@ -3,7 +3,7 @@ import { ConfigSubmitter } from "./types"
 import { argminmax } from "./util"
 
 const numCandidates = 3
-const stepSize = 0.020
+const stepSize = 0.013
 
 export class Monkey {
   private minimize: boolean = false

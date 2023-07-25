@@ -46,7 +46,9 @@ const Container = styled.div<{ selected: boolean, text: string, rainbow: boolean
   ${props => props.rainbow && rainbowCss(props)}
 `
 
-const Button: React.FC<{name: string, active?: boolean, onClick: () => void, rainbow?: boolean}> = ({ name, active, onClick, rainbow }) => {
+const Button: React.FC<{name: string, active?: boolean, onClick: () => void, rainbow?: boolean}> = (
+  { name, active, onClick, rainbow }
+) => {
   return <Container text={name} selected={!!active} onClick={onClick} rainbow={!!rainbow}>
     {name}
   </Container>

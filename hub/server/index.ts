@@ -64,10 +64,12 @@ const handleAck = (message: string) => {
   console.log('[WebSocket Server] From Ack channel:', message)
   message = message.substring(message.indexOf('<')+1, message.indexOf('>'))
   const [_config, jobId, timestamp] = message.split('|')
+  const config = _config.split(',').map(s => parseFloat(s))
   const result: AckDataType = { 
     type: 'ris_position_ack', 
     jobId: jobId.length ? jobId : undefined, 
-    timestamp: jobId.length ? parseInt(timestamp) : undefined 
+    timestamp: jobId.length ? parseInt(timestamp) : undefined ,
+    configuration: config
   }
   
   // Supplying no ID means requesting no feedback

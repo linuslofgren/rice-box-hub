@@ -15,7 +15,7 @@ const Optimize: React.FC<OptimizeProps> = ({ configuration, submitConfiguration,
   const [numIterations, setNumIterations] = useState("2")
 
   const test = async (conf: number[]): Promise<number> => {
-    const result = await submitConfiguration([...conf])
+    const result = (await submitConfiguration([...conf]))
     console.log('Confirmed: ', result)
     addOptData(result)
     return result
