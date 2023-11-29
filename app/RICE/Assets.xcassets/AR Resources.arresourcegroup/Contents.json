@@ -1,0 +1,29 @@
+{
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "resources" : [
+    {
+      "filename" : "ris.arreferenceimage"
+    },
+    {
+      "filename" : "ris2.arreferenceimage"
+    },
+    {
+      "filename" : "ris3.arreferenceimage"
+    },
+    {
+      "filename" : "rx.arreferenceimage"
+    },
+    {
+      "filename" : "rx2.arreferenceimage"
+    },
+    {
+      "filename" : "tx 2.arreferenceimage"
+    },
+    {
+      "filename" : "tx.arreferenceimage"
+    }
+  ]
+}
